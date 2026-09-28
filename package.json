@@ -1,0 +1,30 @@
+{
+  "name": "freelancepk",
+  "version": "1.0.0",
+  "private": true,
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "dev": "node scripts/sync-frontend.mjs && next dev",
+    "build": "node scripts/sync-frontend.mjs && prisma generate && next build",
+    "start": "next start",
+    "lint": "tsc --noEmit",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types --test tests/*.test.mjs",
+    "db:migrate": "prisma migrate deploy",
+    "db:dev": "prisma migrate dev",
+    "db:generate": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "6.12.0",
+    "bcryptjs": "3.0.3",
+    "next": "16.3.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/react": "19.3.0",
+    "prisma": "6.12.0",
+    "typescript": "5.9.3"
+  }
+}

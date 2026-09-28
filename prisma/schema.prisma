@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum InvoiceStatus {
+  draft
+  unpaid
+  paid
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  clients      Client[]
+  invoices     Invoice[]
+  sessions     Session[]
+
+  @@index([createdAt])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@index([expiresAt])
+}
+
+model Client {
+  id        String    @id @default(cuid())
+  userId    String
+  legacyId  String?
+  name      String
+  normalizedName String
+  email     String?
+  company   String?
+  phone     String?
+  notes     String?
+  platform  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invoices  Invoice[]
+
+  @@unique([userId, id])
+  @@unique([userId, legacyId])
+  @@unique([userId, normalizedName])
+  @@index([userId, name])
+  @@index([userId, createdAt])
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  userId        String
+  clientId      String?
+  legacyId      String?
+  invoiceNumber String
+  clientName    String
+  issueDate     DateTime      @db.Date
+  dueDate       DateTime      @db.Date
+  status        InvoiceStatus @default(unpaid)
+  notes         String?
+  subtotal      Decimal       @db.Decimal(14, 2)
+  total         Decimal       @db.Decimal(14, 2)
+  paidAt        DateTime?     @db.Date
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client        Client?       @relation(fields: [clientId, userId], references: [id, userId], onDelete: Restrict)
+  items         InvoiceItem[]
+
+  @@unique([userId, id])
+  @@unique([userId, invoiceNumber])
+  @@unique([userId, legacyId])
+  @@index([userId, issueDate(sort: Desc)])
+  @@index([userId, status, issueDate])
+  @@index([clientId, userId])
+}
+
+model InvoiceItem {
+  id          String   @id @default(cuid())
+  invoiceId   String
+  description String
+  quantity    Decimal  @db.Decimal(10, 2)
+  rate        Decimal  @db.Decimal(14, 2)
+  amount      Decimal  @db.Decimal(14, 2)
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+}

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f4f3ef">
+    <meta name="description" content="A practical client, invoice, and rate workbench for freelancers in Pakistan.">
+    <title>FreelancePK | Freelancer workbench</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell" id="app-shell" hidden>
+      <aside class="sidebar">
+        <a class="brand" href="#dashboard" aria-label="FreelancePK dashboard">
+          <span class="brand-mark">f<span>.</span></span>
+          <span>freelance<span class="brand-light">pk</span></span>
+        </a>
+        <div class="workspace-label">YOUR WORKSPACE</div>
+        <nav class="side-nav" aria-label="Main navigation">
+          <button class="nav-link active" data-view="dashboard"><span class="nav-symbol">01</span>Overview</button>
+          <button class="nav-link" data-view="invoices"><span class="nav-symbol">02</span>Invoices</button>
+          <button class="nav-link" data-view="clients"><span class="nav-symbol">03</span>Clients</button>
+          <button class="nav-link" data-view="rates"><span class="nav-symbol">04</span>Rate calculator</button>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="location-mark"><span class="location-dot"></span>Pakistan · PKR</div>
+          <span class="sidebar-caption" id="account-name"></span>
+          <span class="sidebar-caption">Made for independent work.</span>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="breadcrumb"><span>Workspace</span><span class="breadcrumb-divider">/</span><strong id="page-name">Overview</strong></div>
+          <div class="topbar-actions"><button class="text-button" id="logout-button" data-action="logout">Log out</button><button class="button button-dark button-small" data-action="new-invoice">New invoice <span aria-hidden="true">↗</span></button></div>
+        </header>
+
+        <section class="view active" id="view-dashboard" aria-labelledby="dashboard-title">
+          <div class="page-heading">
+            <div><p class="eyebrow">TODAY · <span id="today-date"></span></p><h1 id="dashboard-title">Your work, <span>in order.</span></h1><p class="heading-note">A clear view of the business behind your craft.</p></div>
+            <div class="heading-accent" aria-hidden="true"><span>PK</span><i></i><i></i><i></i></div>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card stat-income"><div class="stat-top"><span>Paid amount</span><span class="stat-icon">↗</span></div><strong id="stat-earned">PKR 0</strong><small>Across all invoices</small></article>
+            <article class="stat-card"><div class="stat-top"><span>Awaiting payment</span><span class="stat-icon stat-icon-warm">◷</span></div><strong id="stat-outstanding">PKR 0</strong><small id="stat-outstanding-count">No invoices waiting</small></article>
+            <article class="stat-card"><div class="stat-top"><span>Active clients</span><span class="stat-icon stat-icon-blue">◎</span></div><strong id="stat-clients">0</strong><small>In your address book</small></article>
+            <article class="stat-card"><div class="stat-top"><span>Total invoices</span><span class="stat-icon stat-icon-warm">▤</span></div><strong id="stat-invoices">0</strong><small>Across all clients</small></article>
+          </div>
+
+          <div class="dashboard-grid">
+            <section class="panel activity-panel">
+              <div class="panel-heading"><div><p class="eyebrow">KEEPING THINGS MOVING</p><h2>Recent invoices</h2></div><button class="text-button" data-view="invoices">All invoices <span aria-hidden="true">→</span></button></div>
+              <div id="recent-invoices" class="recent-list"></div>
+            </section>
+            <section class="panel shortcut-panel">
+              <div class="panel-heading"><div><p class="eyebrow">A GOOD NEXT STEP</p><h2>Make it count</h2></div><span class="shortcut-spark">✳</span></div>
+              <button class="shortcut-row" data-action="new-invoice"><span class="shortcut-number">01</span><span><strong>Send an invoice</strong><small>Turn finished work into income</small></span><span class="shortcut-arrow">↗</span></button>
+              <button class="shortcut-row" data-view="rates"><span class="shortcut-number">02</span><span><strong>Check your rate</strong><small>Price your time with intention</small></span><span class="shortcut-arrow">↗</span></button>
+              <button class="shortcut-row" data-view="clients"><span class="shortcut-number">03</span><span><strong>Add a client</strong><small>Keep the details close</small></span><span class="shortcut-arrow">↗</span></button>
+            </section>
+          </div>
+          <footer class="page-foot"><span>FREELANCEPK WORKSPACE</span><span>Built for the way you work.</span></footer>
+        </section>
+
+        <section class="view" id="view-invoices" aria-labelledby="invoices-title" hidden>
+          <div class="page-heading compact-heading"><div><p class="eyebrow">GET PAID, CLEARLY</p><h1 id="invoices-title">Invoices</h1><p class="heading-note">Create a tidy record of the work you deliver.</p></div><span class="section-index">01 / MONEY</span></div>
+          <div class="work-grid">
+            <section class="panel editor-panel">
+              <div class="panel-heading"><div><p class="eyebrow">INVOICE EDITOR</p><h2 id="invoice-form-title">New invoice</h2></div><span class="invoice-number" id="invoice-number"></span></div>
+              <form id="invoice-form">
+                <div class="form-grid">
+                  <label class="field field-wide">Bill to<select id="invoice-client" required><option value="">Choose a client</option></select></label>
+                  <label class="field">Issue date<input id="invoice-date" type="date" required></label>
+                  <label class="field">Due date<input id="invoice-due" type="date" required></label>
+                </div>
+                <div class="line-items-scroll"><div class="line-items-heading"><span>DESCRIPTION</span><span>HOURS / QTY</span><span>RATE (PKR)</span><span>AMOUNT</span><span></span></div>
+                <div id="line-items" class="line-items"></div></div>
+                <button type="button" id="add-line" class="add-line">+ Add a line item</button>
+                <div class="invoice-total"><span>Total due</span><strong id="invoice-total">PKR 0</strong></div>
+                <label class="field notes-field">Note <textarea id="invoice-note" rows="2" placeholder="A short thank-you or payment detail"></textarea></label>
+                <div class="form-actions"><button class="button button-dark" type="submit">Save invoice <span aria-hidden="true">↗</span></button><button class="button button-outline" type="button" data-action="print-draft">Print</button><button class="text-button cancel-edit" type="button" data-action="reset-invoice" hidden>Cancel edit</button></div>
+              </form>
+            </section>
+            <section class="panel saved-panel"><div class="panel-heading"><div><p class="eyebrow">YOUR PAPER TRAIL</p><h2>Saved invoices</h2></div><span class="saved-count" id="invoice-count">0</span></div><div id="saved-invoices" class="saved-list"></div></section>
+          </div>
+        </section>
+
+        <section class="view" id="view-clients" aria-labelledby="clients-title" hidden>
+          <div class="page-heading compact-heading"><div><p class="eyebrow">PEOPLE YOU MAKE THINGS WITH</p><h1 id="clients-title">Clients</h1><p class="heading-note">One good relationship at a time.</p></div><span class="section-index">02 / PEOPLE</span></div>
+          <div class="clients-layout">
+            <section class="panel client-form-panel"><div class="panel-heading"><div><p class="eyebrow">ADDRESS BOOK</p><h2 id="client-form-title">Add a client</h2></div><span class="client-form-mark">＋</span></div>
+              <form id="client-form" class="client-form">
+                <label class="field">Client or company name<input id="client-name" name="name" type="text" placeholder="e.g. Sana Studio" required maxlength="80"></label>
+                <label class="field">Company<input id="client-company" name="company" type="text" placeholder="Optional company name" maxlength="120"></label>
+                <label class="field">Email address<input id="client-email" name="email" type="email" placeholder="hello@example.com" maxlength="120"></label>
+                <label class="field">Phone<input id="client-phone" name="phone" type="tel" placeholder="Optional phone number" maxlength="50"></label>
+                <label class="field">Where you work together<select id="client-platform"><option value="Direct">Direct</option><option value="Upwork">Upwork</option><option value="Fiverr">Fiverr</option><option value="Other">Other</option></select></label>
+                <label class="field">Notes<textarea id="client-notes" rows="2" placeholder="Optional private notes" maxlength="5000"></textarea></label>
+                <div class="client-form-actions"><button class="button button-dark" id="client-submit" type="submit">Add client <span aria-hidden="true">↗</span></button><button class="text-button" id="cancel-client-edit" type="button" data-action="reset-client" hidden>Cancel edit</button></div>
+              </form>
+            </section>
+            <section class="panel client-list-panel"><div class="panel-heading"><div><p class="eyebrow">YOUR PEOPLE</p><h2>Client list</h2></div><span class="saved-count" id="client-count">0</span></div><div id="client-list" class="client-list"></div></section>
+          </div>
+        </section>
+
+        <section class="view" id="view-rates" aria-labelledby="rates-title" hidden>
+          <div class="page-heading compact-heading"><div><p class="eyebrow">PRICE YOUR TIME WITH INTENTION</p><h1 id="rates-title">Rate calculator</h1><p class="heading-note">A useful starting point, based on your real numbers.</p></div><span class="section-index">03 / PLANNING</span></div>
+          <div class="rates-layout">
+            <section class="panel rate-input-panel"><div class="panel-heading"><div><p class="eyebrow">YOUR MONTHLY PICTURE</p><h2>What do you need?</h2></div><span class="rate-mark">PKR</span></div>
+              <form id="rate-form" class="rate-form">
+                <label class="field">Take-home income target <span class="input-with-prefix"><span>PKR</span><input id="rate-target" type="number" min="0" step="1000" value="200000"></span></label>
+                <label class="field">Monthly business expenses <span class="input-with-prefix"><span>PKR</span><input id="rate-expenses" type="number" min="0" step="1000" value="30000"></span></label>
+                <label class="field">Estimated tax set-aside <span class="input-with-suffix"><input id="rate-tax" type="number" min="0" max="80" step="1" value="10"><span>%</span></span></label>
+                <label class="field">Billable hours per week <span class="input-with-suffix"><input id="rate-hours" type="number" min="1" max="80" step="1" value="25"><span>hrs</span></span></label>
+                <label class="field">Working days per week <span class="input-with-suffix"><input id="rate-days" type="number" min="1" max="7" step="1" value="5"><span>days</span></span></label>
+                <label class="field">Unbillable time buffer <span class="input-with-suffix"><input id="rate-buffer" type="number" min="0" max="80" step="5" value="20"><span>%</span></span></label>
+              </form>
+            </section>
+            <section class="rate-result"><div class="result-overline">YOUR BASELINE HOURLY RATE</div><div class="result-amount" id="rate-result">PKR 0<span> / hour</span></div><div class="result-rule"></div><div class="result-secondary"><div><span>Daily rate</span><strong id="rate-daily">PKR 0</strong></div><div><span>Monthly target</span><strong id="rate-monthly">PKR 0</strong></div></div><p class="result-capacity"><span id="rate-capacity">0 hours</span> billable per month</p><p class="result-note">This estimate covers your stated expenses and tax set-aside, with room for non-billable time. Use your judgement for each project.</p><div class="result-stamp"><span>FPK</span><span>PLAN WITH CLARITY</span></div></section>
+          </div>
+        </section>
+      </main>
+    </div>
+    <section class="auth-screen" id="auth-screen" hidden>
+      <div class="auth-card">
+        <a class="brand auth-brand" href="#"><span class="brand-mark">f<span>.</span></span><span>freelance<span class="brand-light">pk</span></span></a>
+        <p class="eyebrow" id="auth-eyebrow">YOUR WORKSPACE, YOURS</p>
+        <h1 id="auth-title">Welcome back.</h1>
+        <p class="auth-copy" id="auth-copy">Sign in to continue to your FreelancePK workspace.</p>
+        <p class="auth-error" id="auth-error" role="alert" hidden></p>
+        <form id="login-form" class="auth-form">
+          <label class="field">Email address<input id="login-email" name="email" type="email" autocomplete="email" required maxlength="254"></label>
+          <label class="field">Password<input id="login-password" name="password" type="password" autocomplete="current-password" required maxlength="128"></label>
+          <button class="button button-dark" type="submit">Sign in <span aria-hidden="true">↗</span></button>
+        </form>
+        <form id="register-form" class="auth-form" hidden>
+          <label class="field">Your name<input id="register-name" name="name" type="text" autocomplete="name" required maxlength="80"></label>
+          <label class="field">Email address<input id="register-email" name="email" type="email" autocomplete="email" required maxlength="254"></label>
+          <label class="field">Password<input id="register-password" name="password" type="password" autocomplete="new-password" minlength="8" required maxlength="128"><small>Use at least 8 characters.</small></label>
+          <button class="button button-dark" type="submit">Create account <span aria-hidden="true">↗</span></button>
+        </form>
+        <button class="auth-switch" id="auth-switch" type="button" data-action="toggle-auth">New to FreelancePK? <strong>Create an account</strong></button>
+      </div>
+    </section>
+    <section class="boot-screen" id="boot-screen" role="status">Opening your workspace…</section>
+    <section id="print-area" aria-label="Printable invoice"></section>
+    <dialog class="record-dialog" id="record-dialog" aria-labelledby="record-dialog-title"><div class="dialog-heading"><div><p class="eyebrow" id="record-dialog-eyebrow">DETAILS</p><h2 id="record-dialog-title">Record details</h2></div><button class="dialog-close" type="button" data-action="close-details" aria-label="Close details">×</button></div><div id="record-details"></div></dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

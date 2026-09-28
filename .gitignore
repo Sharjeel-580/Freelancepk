@@ -1,0 +1,11 @@
+node_modules/
+.next/
+public/frontend/
+out/
+coverage/
+.env
+.env.*
+!.env.example
+next-env.d.ts
+tsconfig.tsbuildinfo
+npm-debug.log*
